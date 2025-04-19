@@ -1,5 +1,6 @@
 # Entornos virtuales de Python
-venv/
+act9/
 
 # Cache de pytest
 __pycache__/
+.pytest_cache/
