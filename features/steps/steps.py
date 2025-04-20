@@ -29,12 +29,12 @@ def convertir_palabra_a_numero(palabra):
 
 # Función para formatear el tiempo en un formato legible
 def format_time(time_description):
-    time_description = time_description.strip('"').lower()
-    time_description = time_description.replace('y', ' ') 
-    time_description = time_description.replace('and', ' ') 
-    time_description = time_description.replace('a', ' ') 
-    time_description = time_description.strip()
-    return time_description
+    new_time = time_description.strip('"').lower()
+    new_time = new_time.replace(' y ', ' ') 
+    new_time = new_time.replace(' and ', ' ') 
+    new_time = new_time.replace(' a ', ' ') 
+    new_time = new_time.strip()
+    return new_time
 
 @given('que he comido {cukes} pepinos')
 def step_given_eaten_cukes(context, cukes):
@@ -60,9 +60,7 @@ def step_when_wait_random_interval_time(context, min_time, max_time):
 
     # Función para convertir una descripción de tiempo a horas
     def convertir_a_horas(time_description):
-        pattern = re.compile(
-            r'(?:(\d+)\s*(?:hour|hora)?s?)?\s*(?:(\d+)\s*(?:minute|minuto)?s?)?\s*(?:(\d+)\s*(?:second|segundo)?s?)?'
-        )
+        pattern = re.compile(r'(?:(\d+)\s*(?:hour|hora)?s?)?\s*(?:(\d+)\s*(?:minute|minuto)?s?)?\s*(?:(\d+)\s*(?:second|segundo)?s?)?')
         
         time_description = format_time(time_description) # Formatear la descripción del tiempo
 
@@ -102,7 +100,7 @@ def step_when_wait_time_description(context, time_description):
     if time_description == 'media hora' or time_description == 'half an hour':
         total_time_in_hours = 0.5
     else:
-        pattern = re.compile(r'(?:(\w+)\s*(?:hour|hora)?s?)?\s*(media|half)?\s*(?:(\w+)\s*(?:minute|minuto)?s?)?\s*(?:(\w+)\s*(?:second|segundo)?s?)?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
+        pattern = re.compile(r'(?:(\w+)\s*(?:hours?|horas?))?\s*(media|half)?\s*(?:(\w+)\s*(?:minutes?|minutos?))?\s*(?:(\w+)\s*(?:seconds?|segundos?))?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
         match = pattern.match(time_description)
 
         if match:
@@ -112,7 +110,7 @@ def step_when_wait_time_description(context, time_description):
             seconds_word = match.group(4) or "0" #
 
             hours = convertir_palabra_a_numero(hours_word)
-            if half_hour_word == "media" or "half":
+            if half_hour_word in ["media", "half"]:
                 hours += 0.5
             minutes = convertir_palabra_a_numero(minutes_word)
             seconds = convertir_palabra_a_numero(seconds_word) #
