@@ -28,8 +28,12 @@ jobs:
     - name: Run pytest
       run: pytest
     # Ejecutar pruebas de aceptación con behave
-    - name: Run behave
-      run: behave features
+    - name: Run behave 
+      run: |
+        echo "Running spanish scenarios"
+        behave features --tags @spanish
+        echo "Running english scenarios"
+        behave features --tags @english
     # Notificar a Teams en el caso de que falle
     - name: Notify Teams on failure
       if: failure() # Se envia solo si el job test falla
