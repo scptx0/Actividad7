@@ -32,6 +32,13 @@ jobs:
         source venv/bin/activate
         time python -m pytest tests/load/
 
+    # Run coverage analysis on tests
+    - name: Run pytest with coverage
+      run: |
+        source venv/bin/activate
+        coverage run --source=src,features/steps -m pytest tests/unit tests/load
+        coverage report
+
     # Run acceptance tests with behave
     - name: Run behave 
       run: |
