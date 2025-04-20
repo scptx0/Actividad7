@@ -33,6 +33,7 @@ def format_time(time_description):
     new_time = new_time.replace(' y ', ' ') 
     new_time = new_time.replace(' and ', ' ') 
     new_time = new_time.replace(' a ', ' ') 
+    new_time = new_time.replace(', ', ' ') 
     new_time = new_time.strip()
     return new_time
 
@@ -118,6 +119,7 @@ def step_when_wait_time_description(context, time_description):
         else:
             raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
 
+    logger.info(f"Se esperará un tiempo total de {total_time_in_hours} horas.")
     context.belly.esperar(total_time_in_hours)
 
 @then('mi estómago debería gruñir')
