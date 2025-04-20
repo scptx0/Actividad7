@@ -27,6 +27,11 @@ jobs:
         source venv/bin/activate
         python -m pytest
 
+    - name: Measure stress test execution time
+      run: | 
+        source venv/bin/activate
+        time python -m pytest tests/load/
+
     # Run acceptance tests with behave
     - name: Run behave 
       run: |
