@@ -16,9 +16,23 @@ def convertir_palabra_a_numero(palabra):
         }
         return numeros.get(palabra.lower(), 0)
 
-@given('que he comido {cukes:d} pepinos')
+@given('que he comido {cukes} pepinos')
 def step_given_eaten_cukes(context, cukes):
-    context.belly.comer(cukes)
+
+    try:
+        # Intentar convertir la cadena a un número decimal
+        try:
+            cukes_float = float (cukes) # Todo se considera como un número decimal (incluso si es entero)
+        except ValueError:
+            raise ValueError(f"Se esperaba un número válido, pero se obtuvo: {cukes}") # Si ocurre este error, se salta al except externo
+        
+        # Verificar si el número es negativo
+        if cukes_float < 0:
+            raise ValueError(f"Se esperaba un número positivo, pero se obtuvo: {cukes}")
+        context.belly.comer (cukes_float)
+        context.error = None
+    except Exception as e:
+        context.error = e
 
 @when('espero {time_description}')
 def step_when_wait_time_description(context, time_description):
@@ -57,3 +71,12 @@ def step_then_belly_should_growl(context):
 @then('mi estómago no debería gruñir')
 def step_then_belly_should_not_growl(context):
     assert not context.belly.esta_gruñendo(), "Se esperaba que el estómago no gruñera, pero lo hizo."
+
+@then('debería recibir un error con el mensaje "{mensaje_error}"')
+def step_then_should_receive_error(context, mensaje_error):
+    if context.error:
+        # Verificar que el mensaje del error coincida con el esperado
+        assert str(context.error) == mensaje_error, f"Se esperaba el mensaje de error '{mensaje_error}', pero se obtuvo '{str(context.error)}'."
+    else:
+        # Si no hay error, fallar la prueba
+        assert False, "Se esperaba un error, pero no se obtuvo ninguno."

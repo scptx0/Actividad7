@@ -31,3 +31,20 @@ Característica: Comportamiento del Estómago
     Dado que he comido 35 pepinos
     Cuando espero "1 hora y 30 minutos y 45 segundos"
     Entonces mi estómago debería gruñir
+
+  Escenario: Comer una cantidad fraccionaria de pepinos
+    Dado que he comido 0.5 pepinos
+    Cuando espero 2 horas
+    Entonces mi estómago no debería gruñir
+
+  Escenario: Comer una cantidad negativa de pepinos
+    Dado que he comido -4 pepinos
+    Entonces debería recibir un error con el mensaje "Se esperaba un número positivo, pero se obtuvo: -4"
+
+  Escenario: Comer una cantidad inválida de pepinos
+    Dado que he comido hola pepinos 
+    Entonces debería recibir un error con el mensaje "Se esperaba un número válido, pero se obtuvo: hola"
+
+  Escenario: Comer una cantidad negativa decimal de pepinos
+    Dado que he comido -2.5 pepinos
+    Entonces debería recibir un error con el mensaje "Se esperaba un número positivo, pero se obtuvo: -2.5"
