@@ -58,6 +58,12 @@ Característica: Comportamiento del Estómago
     Dado que he comido -2.5 pepinos
     Entonces debería recibir un error con el mensaje "Se esperaba un número positivo, pero se obtuvo: -2.5"
 
+  @spanish
+  Escenario: Comer pepinos y esperar un tiempo aleatorio
+    Dado que he comido 25 pepinos
+    Cuando espero un tiempo aleatorio entre 1 y 3 horas
+    Entonces mi estómago debería gruñir
+
   @english
   Escenario: Esperar usando horas en inglés
     Dado que he comido 20 pepinos

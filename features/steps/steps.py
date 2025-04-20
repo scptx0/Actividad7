@@ -1,5 +1,12 @@
 from behave import given, when, then
 import re
+import random
+import logging
+
+# Configuración del logger
+logging.basicConfig(filename="features/steps/steps.log", level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger("steps")
+
 
 # Función para convertir palabras numéricas a números
 def convertir_palabra_a_numero(palabra):
@@ -20,6 +27,15 @@ def convertir_palabra_a_numero(palabra):
         }
         return numeros.get(palabra.lower(), 0)
 
+# Función para formatear el tiempo en un formato legible
+def format_time(time_description):
+    time_description = time_description.strip('"').lower()
+    time_description = time_description.replace('y', ' ') 
+    time_description = time_description.replace('and', ' ') 
+    time_description = time_description.replace('a', ' ') 
+    time_description = time_description.strip()
+    return time_description
+
 @given('que he comido {cukes} pepinos')
 def step_given_eaten_cukes(context, cukes):
 
@@ -38,14 +54,50 @@ def step_given_eaten_cukes(context, cukes):
     except Exception as e:
         context.error = e
 
+@when('espero un tiempo aleatorio entre {min_time} y {max_time}')
+def step_when_wait_random_interval_time(context, min_time, max_time):
+    random.seed(40) # Semilla para que las pruebas no sean indeterministas
+
+    # Función para convertir una descripción de tiempo a horas
+    def convertir_a_horas(time_description):
+        pattern = re.compile(
+            r'(?:(\d+)\s*(?:hour|hora)?s?)?\s*(?:(\d+)\s*(?:minute|minuto)?s?)?\s*(?:(\d+)\s*(?:second|segundo)?s?)?'
+        )
+        
+        time_description = format_time(time_description) # Formatear la descripción del tiempo
+
+        match = pattern.match(time_description)
+        if not match:
+            raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
+
+        hours_word = match.group(1) or "0"
+        minutes_word = match.group(2) or "0"
+        seconds_word = match.group(3) or "0"
+
+        hours = convertir_palabra_a_numero(hours_word)
+        minutes = convertir_palabra_a_numero(minutes_word)
+        seconds = convertir_palabra_a_numero(seconds_word)
+
+        # Convertir todo a horas
+        return hours + (minutes / 60) + (seconds / 3600)
+
+    # Convertir los tiempos mínimo y máximo a horas (se asume que primero va el mínimo y luego el máximo)
+    min_time_in_hours = convertir_a_horas(min_time)
+    max_time_in_hours = convertir_a_horas(max_time)
+
+    if min_time_in_hours < 0 or max_time_in_hours < 0:
+        raise ValueError("Los tiempos no pueden ser negativos.")
+
+    if min_time_in_hours > max_time_in_hours:
+        raise ValueError("El tiempo mínimo no puede ser mayor que el tiempo máximo.")
+
+    random_hours = random.uniform(min_time_in_hours, max_time_in_hours)
+    logger.info(f"Se generó un tiempo aleatorio de {random_hours} horas.")
+    context.belly.esperar(random_hours)
+
 @when('espero {time_description}')
-def step_when_wait_time_description(context, time_description):
-    time_description = time_description.strip('"').lower()
-    time_description = time_description.replace('y', ' ') 
-    # Se agregan casos como "n" hour and a half
-    time_description = time_description.replace('and', ' ') 
-    time_description = time_description.replace('a', ' ') 
-    time_description = time_description.strip()
+def step_when_wait_time_description(context, time_description):   
+    time_description = format_time(time_description) # Formatear la descripción del tiempo
 
     if time_description == 'media hora' or time_description == 'half an hour':
         total_time_in_hours = 0.5
@@ -63,9 +115,9 @@ def step_when_wait_time_description(context, time_description):
             if half_hour_word == "media" or "half":
                 hours += 0.5
             minutes = convertir_palabra_a_numero(minutes_word)
-            seconds_word = convertir_palabra_a_numero(seconds_word) #
+            seconds = convertir_palabra_a_numero(seconds_word) #
 
-            total_time_in_hours = hours + (minutes / 60) + (seconds_word / 3600) #
+            total_time_in_hours = hours + (minutes / 60) + (seconds / 3600) #
         else:
             raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
 
