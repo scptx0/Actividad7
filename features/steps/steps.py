@@ -38,7 +38,6 @@ def format_time(time_description):
 
 @given('que he comido {cukes} pepinos')
 def step_given_eaten_cukes(context, cukes):
-
     try:
         # Intentar convertir la cadena a un número decimal
         try:
@@ -47,8 +46,8 @@ def step_given_eaten_cukes(context, cukes):
             raise ValueError(f"Se esperaba una cadena numérica, pero se obtuvo: {cukes}") # Si ocurre este error, se salta al except externo
         
         # Verificar si el número es válido
-        if cukes_float < 0.0 or cukes_float > 100.0:
-            raise ValueError(f"Se esperaba un número válido (entre 0 y 100), pero se obtuvo: {cukes}")
+        if cukes_float < 0.0 or cukes_float > 10000.0:
+            raise ValueError(f"Se esperaba un número válido (entre 0 y 10000), pero se obtuvo: {cukes}")
         context.belly.comer (cukes_float)
         context.error = None
     except Exception as e:

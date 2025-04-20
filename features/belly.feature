@@ -46,7 +46,7 @@ Característica: Comportamiento del Estómago
   @spanish
   Escenario: Comer una cantidad negativa de pepinos
     Dado que he comido -4 pepinos
-    Entonces debería recibir un error con el mensaje "Se esperaba un número válido (entre 0 y 100), pero se obtuvo: -4"
+    Entonces debería recibir un error con el mensaje "Se esperaba un número válido (entre 0 y 10000), pero se obtuvo: -4"
 
   @spanish
   Escenario: Comer una cantidad inválida de pepinos
@@ -56,7 +56,7 @@ Característica: Comportamiento del Estómago
   @spanish
   Escenario: Comer una cantidad negativa decimal de pepinos
     Dado que he comido -2.5 pepinos
-    Entonces debería recibir un error con el mensaje "Se esperaba un número válido (entre 0 y 100), pero se obtuvo: -2.5"
+    Entonces debería recibir un error con el mensaje "Se esperaba un número válido (entre 0 y 10000), pero se obtuvo: -2.5"
 
   @spanish
   Escenario: Comer pepinos y esperar un tiempo aleatorio
@@ -67,7 +67,14 @@ Característica: Comportamiento del Estómago
   @spanish
   Escenario: Comer una cantidad muy grande de pepinos
     Dado que he comido 101 pepinos
-    Entonces debería recibir un error con el mensaje "Se esperaba un número válido (entre 0 y 100), pero se obtuvo: 101"
+    Cuando espero 5 horas
+    Entonces mi estómago debería gruñir
+
+  @spanish
+  Escenario: Comer 1000 pepinos y esperar 10 horas
+    Dado que he comido 1000 pepinos
+    Cuando espero 10 horas
+    Entonces mi estómago debería gruñir
 
   @english
   Escenario: Esperar usando horas en inglés
