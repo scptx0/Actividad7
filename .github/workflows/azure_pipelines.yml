@@ -3,7 +3,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -20,10 +20,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
     # Ejecutar pruebas unitarias
     - name: Run pytest
       run: pytest
-    
     # Ejecutar pruebas de aceptación con behave
     - name: Run behave
       run: behave features
+    # Notificar a Teams en el caso de que falle
+    - name: Notify Teams on failure
+      if: failure() # Se envia solo si el job test falla
+      run: |
+          curl -X POST -H 'Content-Type: application/json' \
+        --data '{"text": "El pipeline ha fallado. Revisa los detalles en GitHub Actions: https://github.com/scptx0/Actividad7/actions"}' \
+        ${{ secrets.TEAMS_WEBHOOK_URL }}
+      
