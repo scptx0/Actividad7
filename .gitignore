@@ -4,3 +4,6 @@ act9/
 # Cache de pytest
 __pycache__/
 .pytest_cache/
+
+# Archivos de logs
+*.log
