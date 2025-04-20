@@ -44,11 +44,11 @@ def step_given_eaten_cukes(context, cukes):
         try:
             cukes_float = float (cukes) # Todo se considera como un número decimal (incluso si es entero)
         except ValueError:
-            raise ValueError(f"Se esperaba un número válido, pero se obtuvo: {cukes}") # Si ocurre este error, se salta al except externo
+            raise ValueError(f"Se esperaba una cadena numérica, pero se obtuvo: {cukes}") # Si ocurre este error, se salta al except externo
         
-        # Verificar si el número es negativo
-        if cukes_float < 0:
-            raise ValueError(f"Se esperaba un número positivo, pero se obtuvo: {cukes}")
+        # Verificar si el número es válido
+        if cukes_float < 0.0 or cukes_float > 100.0:
+            raise ValueError(f"Se esperaba un número válido (entre 0 y 100), pero se obtuvo: {cukes}")
         context.belly.comer (cukes_float)
         context.error = None
     except Exception as e:

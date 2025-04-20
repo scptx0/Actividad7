@@ -33,7 +33,7 @@ class TestCukeAmount:
 
         step_given_eaten_cukes(context, cukes)
 
-        expected_error_message = f"Se esperaba un número positivo, pero se obtuvo: {cukes}"
+        expected_error_message = f"Se esperaba un número válido (entre 0 y 100), pero se obtuvo: {cukes}"
         assert isinstance (context.error, ValueError) and str(context.error) == expected_error_message, f"Se esperaba un error, pero no se produjo. Error: {context.error}"
 
     # Test para una cantidad decimal negativa de pepinos
@@ -43,7 +43,7 @@ class TestCukeAmount:
 
         step_given_eaten_cukes(context, cukes)
 
-        expected_error_message = f"Se esperaba un número positivo, pero se obtuvo: {cukes}"
+        expected_error_message = f"Se esperaba un número válido (entre 0 y 100), pero se obtuvo: {cukes}"
         assert isinstance (context.error, ValueError) and str(context.error) == expected_error_message, f"Se esperaba un error, pero no se produjo. Error: {context.error}"
 
     # Test para una cantidad no numérica de pepinos
@@ -53,6 +53,6 @@ class TestCukeAmount:
 
         step_given_eaten_cukes(context, cukes)
 
-        expected_error_message = f"Se esperaba un número válido, pero se obtuvo: {cukes}"
+        expected_error_message = f"Se esperaba una cadena numérica, pero se obtuvo: {cukes}"
         assert isinstance (context.error, ValueError) and str(context.error) == expected_error_message, f"Se esperaba un error, pero no se produjo. Error: {context.error}"
         
