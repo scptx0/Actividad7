@@ -94,6 +94,24 @@ Característica: Comportamiento del Estómago
     Cuando espero "     2 minutos y 5 segundos"
     Entonces mi estómago no debería gruñir
 
+  @spanish
+  Escenario: Comer pepinos y esperar un tiempo aleatorio (intervalo inválido)
+    Dado que he comido 5 pepinos
+    Cuando espero un tiempo aleatorio entre -1 y 4 horas
+    Entonces debería recibir un error con el mensaje "Los tiempos no pueden ser negativos."
+
+  @spanish
+  Escenario: Comer pepinos y esperar un tiempo aleatorio (intervalo inválido)
+    Dado que he comido 5 pepinos
+    Cuando espero un tiempo aleatorio entre 6 y 4 horas
+    Entonces debería recibir un error con el mensaje "El tiempo mínimo no puede ser mayor que el tiempo máximo."
+  
+  @spanish
+  Escenario: Comer pepinos y esperar un tiempo inválido
+    Dado que he comido 5 pepinos
+    Cuando espero -5 horas
+    Entonces debería recibir un error con el mensaje "Los tiempos no pueden ser negativos."
+
   @english
   Escenario: Esperar usando horas en inglés
     Dado que he comido 20 pepinos

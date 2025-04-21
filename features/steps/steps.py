@@ -60,67 +60,84 @@ def step_when_wait_random_interval_time(context, min_time, max_time):
 
     # Función para convertir una descripción de tiempo a horas
     def convertir_a_horas(time_description):
-        pattern = re.compile(r'(?:(\d+)\s*(?:hour|hora)?s?)?\s*(?:(\d+)\s*(?:minute|minuto)?s?)?\s*(?:(\d+)\s*(?:second|segundo)?s?)?')
-        
-        time_description = format_time(time_description) # Formatear la descripción del tiempo
+        try: 
+            pattern = re.compile(r'(?:(-?\w+)\s*(?:hour|hora)?s?)?\s*(?:(-?\w+)\s*(?:minute|minuto)?s?)?\s*(?:(-?\w+)\s*(?:second|segundo)?s?)?')
+            
+            time_description = format_time(time_description) # Formatear la descripción del tiempo
 
-        match = pattern.match(time_description)
-        if not match:
-            raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
+            match = pattern.match(time_description)
+            if not match:
+                raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
 
-        hours_word = match.group(1) or "0"
-        minutes_word = match.group(2) or "0"
-        seconds_word = match.group(3) or "0"
+            hours_word = match.group(1) or "0"
+            minutes_word = match.group(2) or "0"
+            seconds_word = match.group(3) or "0"
 
-        hours = convertir_palabra_a_numero(hours_word)
-        minutes = convertir_palabra_a_numero(minutes_word)
-        seconds = convertir_palabra_a_numero(seconds_word)
-
-        # Convertir todo a horas
-        return hours + (minutes / 60) + (seconds / 3600)
+            hours = convertir_palabra_a_numero(hours_word)
+            minutes = convertir_palabra_a_numero(minutes_word)
+            seconds = convertir_palabra_a_numero(seconds_word)
+            
+            # Convertir todo a horas
+            return hours + (minutes / 60) + (seconds / 3600)
+        except Exception as e:
+            raise e
 
     # Convertir los tiempos mínimo y máximo a horas (se asume que primero va el mínimo y luego el máximo)
-    min_time_in_hours = convertir_a_horas(min_time)
-    max_time_in_hours = convertir_a_horas(max_time)
+    try:
+        min_time_in_hours = convertir_a_horas(min_time)
+        max_time_in_hours = convertir_a_horas(max_time)
 
-    if min_time_in_hours < 0 or max_time_in_hours < 0:
-        raise ValueError("Los tiempos no pueden ser negativos.")
+        if min_time_in_hours < 0 or max_time_in_hours < 0:
+            raise ValueError("Los tiempos no pueden ser negativos.")
+        if min_time_in_hours > max_time_in_hours:
+            raise ValueError("El tiempo mínimo no puede ser mayor que el tiempo máximo.")
 
-    if min_time_in_hours > max_time_in_hours:
-        raise ValueError("El tiempo mínimo no puede ser mayor que el tiempo máximo.")
+        random_hours = random.uniform(min_time_in_hours, max_time_in_hours)
+        logger.info(f"Se generó un tiempo aleatorio de {random_hours} horas.")
+        context.belly.esperar(random_hours)
+        context.error = None
 
-    random_hours = random.uniform(min_time_in_hours, max_time_in_hours)
-    logger.info(f"Se generó un tiempo aleatorio de {random_hours} horas.")
-    context.belly.esperar(random_hours)
+    except Exception as e:
+        context.error = e
+        logger.error(f"Error capturado: {str(context.error)}")
+
 
 @when('espero {time_description}')
 def step_when_wait_time_description(context, time_description):   
-    time_description = format_time(time_description) # Formatear la descripción del tiempo
+    try: 
+        time_description = format_time(time_description) # Formatear la descripción del tiempo
 
-    if time_description == 'media hora' or time_description == 'half an hour':
-        total_time_in_hours = 0.5
-    else:
-        pattern = re.compile(r'(?:(\w+)\s*(?:hours?|horas?))?\s*(media|half)?\s*(?:(\w+)\s*(?:minutes?|minutos?))?\s*(?:(\w+)\s*(?:seconds?|segundos?))?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
-        match = pattern.match(time_description)
-
-        if match:
-            hours_word = match.group(1) or "0"
-            half_hour_word = match.group(2) or "0" #
-            minutes_word = match.group(3) or "0"
-            seconds_word = match.group(4) or "0" #
-
-            hours = convertir_palabra_a_numero(hours_word)
-            if half_hour_word in ["media", "half"]:
-                hours += 0.5
-            minutes = convertir_palabra_a_numero(minutes_word)
-            seconds = convertir_palabra_a_numero(seconds_word) #
-
-            total_time_in_hours = hours + (minutes / 60) + (seconds / 3600) #
+        if time_description == 'media hora' or time_description == 'half an hour':
+            total_time_in_hours = 0.5
         else:
-            raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
+            pattern = re.compile(r'(?:(-?\w+)\s*(?:hours?|horas?))?\s*(media|half)?\s*(?:(-?\w+)\s*(?:minutes?|minutos?))?\s*(?:(-?\w+)\s*(?:seconds?|segundos?))?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
+            match = pattern.match(time_description)
 
-    logger.info(f"Se esperará un tiempo total de {total_time_in_hours} horas.")
-    context.belly.esperar(total_time_in_hours)
+            if match:
+                hours_word = match.group(1) or "0"
+                half_hour_word = match.group(2) or "0"
+                minutes_word = match.group(3) or "0"
+                seconds_word = match.group(4) or "0" 
+
+                hours = convertir_palabra_a_numero(hours_word)
+                if half_hour_word in ["media", "half"]:
+                    hours += 0.5
+                minutes = convertir_palabra_a_numero(minutes_word)
+                seconds = convertir_palabra_a_numero(seconds_word) 
+
+                if hours < 0 or minutes < 0 or seconds < 0:
+                    raise ValueError("Los tiempos no pueden ser negativos.")
+
+                total_time_in_hours = hours + (minutes / 60) + (seconds / 3600) #
+            else:
+                raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
+
+        context.belly.esperar(total_time_in_hours)
+        context.error = None
+
+    except Exception as e:
+        context.error = e
+
 
 @then('mi estómago debería gruñir')
 def step_then_belly_should_growl(context):
@@ -130,11 +147,10 @@ def step_then_belly_should_growl(context):
 def step_then_belly_should_not_growl(context):
     assert not context.belly.esta_gruñendo(), "Se esperaba que el estómago no gruñera, pero lo hizo."
 
-@then('debería recibir un error con el mensaje "{mensaje_error}"')
-def step_then_should_receive_error(context, mensaje_error):
-    if context.error:
-        # Verificar que el mensaje del error coincida con el esperado
-        assert str(context.error) == mensaje_error, f"Se esperaba el mensaje de error '{mensaje_error}', pero se obtuvo '{str(context.error)}'."
+@then('debería recibir un error con el mensaje "{error_message}"')
+def step_then_should_receive_error(context, error_message):
+    # Este paso no debería ejecutarse si el error fue lanzado correctamente
+    if context.error is None:
+        raise AssertionError("El sistema no lanzó el error esperado.")
     else:
-        # Si no hay error, fallar la prueba
-        assert False, "Se esperaba un error, pero no se obtuvo ninguno."
+        assert str(context.error) == error_message, f"Se esperaba el error: {error_message}, pero se obtuvo: {str(context.error)}"
