@@ -32,12 +32,11 @@ jobs:
         source venv/bin/activate
         time python -m pytest tests/load/
 
-    # Run coverage analysis on tests
+    # Run coverage analysis on pytest tests
     - name: Run pytest with coverage
       run: |
         source venv/bin/activate
         coverage run --source=src,features/steps -m pytest tests/unit tests/load
-        coverage report
 
     # Run acceptance tests with behave
     - name: Run behave 
@@ -47,6 +46,19 @@ jobs:
         behave features --tags @spanish
         echo "Running English scenarios"
         behave features --tags @english
+
+    # Run coverage analysis on behave tests
+    - name: Run behave with coverage
+      run: |
+        source venv/bin/activate
+        coverage run --append --source=src,features/steps -m behave features --tags "@spanish"
+        coverage run --append --source=src,features/steps -m behave features --tags "@english"
+
+    # Generate combined coverage report
+    - name: Generate combined coverage report
+      run: |
+        source venv/bin/activate
+        coverage report
 
     # Notify Teams on failure
     - name: Notify Teams on failure
