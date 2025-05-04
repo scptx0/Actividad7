@@ -154,3 +154,7 @@ def step_then_should_receive_error(context, error_message):
         raise AssertionError("El sistema no lanzó el error esperado.")
     else:
         assert str(context.error) == error_message, f"Se esperaba el error: {error_message}, pero se obtuvo: {str(context.error)}"
+
+@then('debería haber comido {cukes} pepinos')
+def step_then_eaten_cukes (context, cukes):
+    assert float(context.belly.pepinos_comidos) == float(cukes)
