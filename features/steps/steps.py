@@ -11,7 +11,7 @@ logger = logging.getLogger("steps")
 # Función para convertir palabras numéricas a números
 def convertir_palabra_a_numero(palabra):
     try:
-        return int(palabra)
+        return float(palabra)
     except ValueError:
         numeros = {
             "cero": 0, "un": 1, "uno": 1, "una": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5,
@@ -61,7 +61,7 @@ def step_when_wait_random_interval_time(context, min_time, max_time):
     # Función para convertir una descripción de tiempo a horas
     def convertir_a_horas(time_description):
         try: 
-            pattern = re.compile(r'(?:(-?\w+)\s*(?:hour|hora)?s?)?\s*(?:(-?\w+)\s*(?:minute|minuto)?s?)?\s*(?:(-?\w+)\s*(?:second|segundo)?s?)?')
+            pattern = re.compile(r'(?:(-?\w+(?:\.\w+)?)\s*(?:hour|hora)?s?)?\s*(?:(-?\w+(?:\.\w+)?)\s*(?:minute|minuto)?s?)?\s*(?:(-?\w+(?:\.\w+)?)\s*(?:second|segundo)?s?)?')
             
             time_description = format_time(time_description) # Formatear la descripción del tiempo
 
@@ -106,20 +106,23 @@ def step_when_wait_random_interval_time(context, min_time, max_time):
 def step_when_wait_time_description(context, time_description):   
     try: 
         time_description = format_time(time_description) # Formatear la descripción del tiempo
+        logger.info(f"{time_description}")
 
         if time_description == 'media hora' or time_description == 'half an hour':
             total_time_in_hours = 0.5
         else:
-            pattern = re.compile(r'(?:(-?\w+)\s*(?:hours?|horas?))?\s*(media|half)?\s*(?:(-?\w+)\s*(?:minutes?|minutos?))?\s*(?:(-?\w+)\s*(?:seconds?|segundos?))?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
+            pattern = re.compile(r'(?:(-?\w+(?:\.\w+)?)\s*(?:hours?|horas?))?\s*(media|half)?\s*(?:(-?\w+(?:\.\w+)?)\s*(?:minutes?|minutos?))?\s*(?:(-?\w+(?:\.\w+)?)\s*(?:seconds?|segundos?))?') # Solo se aceptaran half an hour (ya está arriba) y "n" hours and a half
             match = pattern.match(time_description)
 
             if match:
                 hours_word = match.group(1) or "0"
+                logger.info(f"{hours_word}")
                 half_hour_word = match.group(2) or "0"
                 minutes_word = match.group(3) or "0"
                 seconds_word = match.group(4) or "0" 
 
                 hours = convertir_palabra_a_numero(hours_word)
+                logger.info(f"{hours}")
                 if half_hour_word in ["media", "half"]:
                     hours += 0.5
                 minutes = convertir_palabra_a_numero(minutes_word)
