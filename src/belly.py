@@ -11,4 +11,6 @@ class Belly:
 
     def esta_gruñendo(self):
         # El estómago gruñe si ha esperado al menos 1.5 horas y ha comido más de 10 pepinos
-        return self.tiempo_esperado >= 1.5 and self.pepinos_comidos > 10.0 # Se modifica la condición (10 -> 10.0) para que no haya un casteo de float a int
+        suficiente_tiempo_pasado = self.tiempo_esperado >= 1.5
+        suficientes_pepinos_comidos = self.pepinos_comidos > 10.0
+        return suficiente_tiempo_pasado and suficientes_pepinos_comidos
