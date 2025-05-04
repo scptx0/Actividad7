@@ -172,3 +172,15 @@ Característica: Comportamiento del Estómago
     Dado que he comido 12 pepinos
     Cuando espero 1.5 horas
     Entonces mi estómago debería gruñir
+
+  @ejercicio13
+  Escenario: Ver cuántos pepinos puedo comer antes de que el estómago gruña
+    Dado que he comido 8 pepinos
+    Cuando pregunto cúantos pepinos más puedo comer
+    Entonces debería decirme que puedo comer 2 pepinos más
+
+  @ejercicio13
+  Escenario: Comí los pepinos suficientes y pregunto cúantos más debo comer
+    Dado que he comido 10 pepinos
+    Cuando pregunto cúantos pepinos más puedo comer
+    Entonces debería recibir un error con el mensaje "Ya has comido los pepinos suficientes para que tu estomago gruña"

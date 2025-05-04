@@ -141,6 +141,14 @@ def step_when_wait_time_description(context, time_description):
     except Exception as e:
         context.error = e
 
+@when ('pregunto cúantos pepinos más puedo comer')
+def step_when_ask_remaining_cucumbers (context):
+    remaining = 10.0 - context.belly.pepinos_comidos
+    if remaining <= 0.0:
+        context.error = ValueError("Ya has comido los pepinos suficientes para que tu estomago gruña")
+    else:
+        context.remaining_cucumbers = remaining
+        context.error = None
 
 @then('mi estómago debería gruñir')
 def step_then_belly_should_growl(context):
@@ -161,3 +169,7 @@ def step_then_should_receive_error(context, error_message):
 @then('debería haber comido {cukes} pepinos')
 def step_then_eaten_cukes (context, cukes):
     assert float(context.belly.pepinos_comidos) == float(cukes)
+
+@then('debería decirme que puedo comer {cukes} pepinos más')
+def step_then_should_eat_more_cucumbers (context, cukes):
+    assert context.remaining_cucumbers == float(cukes), f"Se esperaba que dijera {cukes} pepinos, pero se dijo: {context.remaining_cucumbers}"

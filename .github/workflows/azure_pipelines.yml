@@ -42,10 +42,12 @@ jobs:
     - name: Run behave 
       run: |
         source venv/bin/activate
-        echo "Running Spanish scenarios"
-        behave features --tags @spanish
+        echo "Running Spanish scenarios" 
+        behave features --tags @spanish -k
         echo "Running English scenarios"
-        behave features --tags @english
+        behave features --tags @english -k 
+        echo "Running ejercicio 13 scenarios"
+        behave features --tags "ejercicio13" -k
 
     # Run coverage analysis on behave tests
     - name: Run behave with coverage
@@ -53,6 +55,7 @@ jobs:
         source venv/bin/activate
         coverage run --append --source=src,features/steps -m behave features --tags "@spanish"
         coverage run --append --source=src,features/steps -m behave features --tags "@english"
+        coverage run --append --source=src,features/steps -m behave features --tags "@ejercicio13"
 
     # Generate combined coverage report
     - name: Generate combined coverage report
